@@ -1,12 +1,14 @@
 defmodule Hangman do
-  alias Hangman.Game
+  def new_game() do
+    {:ok, pid} = Supervisor.start_child(Hangman.Supervisor, [])
+    pid
+  end
 
-  defdelegate new_game(), to: Game
-  defdelegate tally(game_state), to: Game
+  def tally(game_pid) do
+    GenServer.call(game_pid, {:tally})
+  end
 
-  def make_move(game_state, guess) do
-    game_state = Game.make_move(game_state, guess)
-
-    { game_state, Game.tally(game_state) }
+  def make_move(game_pid, guess) do
+    GenServer.call(game_pid, {:make_move, guess})
   end
 end

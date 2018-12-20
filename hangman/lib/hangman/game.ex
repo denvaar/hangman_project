@@ -4,7 +4,7 @@ defmodule Hangman.Game do
     turns_left:   7,
     game_status:  :init,
     letters:      [],
-    used:         MapSet.new(),
+    used:         MapSet.new()
   )
 
   def new_game() do
@@ -19,15 +19,13 @@ defmodule Hangman.Game do
   end
 
   def make_move(%{game_status: status} = game_state, _guess) when status in [:won, :lost] do
-    game_state
+    return_with_tally(game_state)
   end
 
   def make_move(game_state, guess) do
-    accept_move(
-      game_state,
-      guess,
-      MapSet.member?(game_state.used, guess)
-    )
+    game_state
+    |> accept_move(guess, MapSet.member?(game_state.used, guess))
+    |> return_with_tally()
   end
 
   def tally(game_state) do
@@ -36,6 +34,8 @@ defmodule Hangman.Game do
        used_letters: MapSet.to_list(game_state.used),
        letters:      reveal_guessed(game_state.letters, game_state.used) }
   end
+
+  defp return_with_tally(game_state), do: { game_state, tally(game_state) }
 
   defp accept_move(game_state, _guess, _already_guessed = true) do
     Map.put(game_state, :game_status, :already_used)
