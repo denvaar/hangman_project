@@ -14,6 +14,7 @@ defmodule ConsoleClient.Mixfile do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      included_applications: [:hangman], # load the code, but do not start the app
       extra_applications: [:logger]
     ]
   end
